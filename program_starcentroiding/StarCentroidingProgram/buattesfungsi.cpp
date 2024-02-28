@@ -5,7 +5,7 @@
 int main() {
     std::string imgNumberStr;
     std::ifstream myFile;
-    myFile.open("./data/imgNumber.csv");
+    myFile.open("./result_starcentroiding/starImages2/stars1.png");
 
     if (myFile.is_open()) {
         getline(myFile, imgNumberStr);

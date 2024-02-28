@@ -20,7 +20,7 @@ int main() {
 
     string imgNumberStr;
     ifstream myFile;
-    myFile.open("./program_starcentroiding/imgNumber.csv");
+    myFile.open("/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/program_starcentroiding/imgNumber.csv");
     
     while(myFile.good()) {
       string line;
@@ -35,7 +35,7 @@ int main() {
 
     // ARRAYS OF IMAGE PATHS
 
-      string imgFolderPath = "./result_starcentroiding/starImages2/";
+      string imgFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starImages2/";
       string imgFileNameTitle = "stars";
       string imgExtension = ".png";
       int imgIndexInt = 0;
@@ -51,7 +51,7 @@ int main() {
       }
 
     // ARRAYS OF RESULT PATHS
-      string resultFolderPath = "./result_starcentroiding/starPositionCalculated/secondMethod/WCG";
+      string resultFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starPositionCalculated/secondMethod/WCG";
       string resultExtension = ".csv";
       int resultIndexInt = 0;
       string resultIndexStr = "";
@@ -92,7 +92,7 @@ int main() {
     // 2. FINDING THE STAR CENTROID
 
         // Declaring Region of Interest
-        int ROI_size_default = 8;                     // The size of ROI rows and columns
+        int ROI_size_default = 24;                     // The size of ROI rows and columns
         int ROI_size = ROI_size_default;
 
         // Declaring Signal and Noise Threshold
@@ -120,8 +120,8 @@ int main() {
         }
 
         // Iterating Through Each Pixels
-        for (int i = 1; i < rows-1; i++) {
-            for (int j = 1; j < columns-1; j++) { 
+        for (int i = 24; i < rows-24; i++) {
+            for (int j = 24; j < columns-24; j++) { 
                 
                 /*if (bigIndex == 7 && i > 320 && j > 320 && i < 360 && j < 360) {
                             cout << i+1 << ", " << j+1 << ". " << toCheck[i][j] << endl;
@@ -132,15 +132,10 @@ int main() {
 
                           //if (bigIndex == 5) {cout << i+1 << ", " << j+1 << ". " << toCheck[i][j] << endl;}
 
-                          if (i <= 6 || j <= 6 || i >= 2458 || i >= 3274) {
-                            ROI_size = 6;
-                            if (i <= 4 || j <= 4 || i >= 2460 || i >= 3276) {
-                              ROI_size = 4;
-                              if (i <= 2 || j <= 2 || i >= 2462 || i >= 3278) {
-                                ROI_size = 2;
-                              }
-                            } 
+                          if (i <= 18 || j <= 18 || i >= 2446 || i >= 3262) {
+                            ROI_size = 18;
                           }   else {ROI_size = ROI_size_default;}
+
 
                       int** ROI = new int*[ROI_size];
                       for (int i3 = 0; i3 < ROI_size; ++i3) {

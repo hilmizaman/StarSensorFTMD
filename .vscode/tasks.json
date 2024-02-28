@@ -23,7 +23,7 @@
 		  "isDefault": true
 		},
 		"options": {
-		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		  "cwd": "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/program_starcentroiding/StarCentroidingProgram"
 		}
 	  },
 	  {
@@ -48,7 +48,7 @@
 		  "isDefault": true
 		},
 		"options": {
-		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		  "cwd": "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/program_starcentroiding/StarCentroidingProgram"
 		}
 	  },
 	  {
@@ -73,7 +73,7 @@
 		  "isDefault": true
 		},
 		"options": {
-		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		  "cwd": "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/program_starcentroiding/StarCentroidingProgram"
 		}
 	  }
 	]

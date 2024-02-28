@@ -1,8 +1,8 @@
 import numpy as np
 
 for i in range(100):
-    path='./result_staridentification/StarPosCalc/CG'
-    #path='./result_staridentification/StarPosCalc/WCG'
+    path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/CG'
+    #path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/WCG'
     file='.txt'
     num=str(i+1)
     path_to='./result_staridentification/StarPos_sorted/CG'

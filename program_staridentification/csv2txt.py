@@ -10,7 +10,7 @@ def csv_to_txt(csv_filename, txt_filename):
 
 # Example usage
 for i in range(100):
-    path='./result_starcentroiding/starPositionCalculated/firstMethod/CG'
+    path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starPositionCalculated/firstMethod/CG'
     file='.csv'
     num=str(i+1)
     path_to='./result_staridentification/StarPosCalc/CG'
