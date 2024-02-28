@@ -1,0 +1,81 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "build CenterofGrav",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-fdiagnostics-color=always",
+		  "-g",
+		  "cg.cpp",
+		  "-o",
+		  "CenterofGrav",
+		  "-I/usr/local/include/opencv4",
+          "-L/usr/local/lib",
+          "-lopencv_core",
+          "-lopencv_highgui",
+          "-lopencv_imgcodecs",
+		  "-lopencv_imgproc"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"options": {
+		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		}
+	  },
+	  {
+		"label": "build IniBuatNgetes",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-fdiagnostics-color=always",
+		  "-g",
+		  "buattesfungsi.cpp",
+		  "-o",
+		  "IniBuatNgetes",
+		  "-I/usr/local/include/opencv4",
+          "-L/usr/local/lib",
+          "-lopencv_core",
+          "-lopencv_highgui",
+          "-lopencv_imgcodecs",
+		  "-lopencv_imgproc"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"options": {
+		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		}
+	  },
+	  {
+		"label": "build WeightedCoG",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-fdiagnostics-color=always",
+		  "-g",
+		  "wcg.cpp",
+		  "-o",
+		  "WeightedCoG",
+		  "-I/usr/local/include/opencv4",
+          "-L/usr/local/lib",
+          "-lopencv_core",
+          "-lopencv_highgui",
+          "-lopencv_imgcodecs",
+		  "-lopencv_imgproc"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"options": {
+		  "cwd": "/home/hilmi/star-sensor-ftmd/Star_Sensor_FTMD_hilmi/program_starcentroiding/StarCentroidingProgram"
+		}
+	  }
+	]
+  }
+  

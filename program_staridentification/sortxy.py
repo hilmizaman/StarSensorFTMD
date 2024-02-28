@@ -1,0 +1,41 @@
+import numpy as np
+
+for i in range(100):
+    path='./result_staridentification/StarPosCalc/CG'
+    #path='./result_staridentification/StarPosCalc/WCG'
+    file='.txt'
+    num=str(i+1)
+    path_to='./result_staridentification/StarPos_sorted/CG'
+    #path_to='./result_staridentification/StarPos_sorted/WCG'
+    file_from=path+num+file
+    file_to=path_to+num+file
+    # Read coordinates from the file
+    with open(file_from, "r") as file:
+        lines = file.readlines()
+
+    # Parse coordinates from lines
+    coordinates = np.array([list(map(float, line.strip().split())) for line in lines])
+
+    # Calculate distances from (0,0)
+    distances = np.linalg.norm(coordinates, axis=1)
+
+    # Find the index of the point closest to (0,0)
+    closest_index = np.argmin(distances)
+    closest_point = coordinates[closest_index]
+
+    # Remove the closest point from the original data
+    coordinates_without_closest = np.delete(coordinates, closest_index, axis=0)
+
+    # Calculate distances from the closest point
+    distances_from_closest = np.linalg.norm(coordinates_without_closest - closest_point, axis=1)
+
+    # Combine coordinates and distances for sorting
+    data_with_distances = np.column_stack((coordinates_without_closest, distances_from_closest))
+
+    # Sort based on distances
+    sorted_data = data_with_distances[data_with_distances[:, 2].argsort()]
+
+    # Insert the closest point at the top
+    sorted_data = np.insert(sorted_data, 0, np.append(closest_point, 0), axis=0)
+
+    np.savetxt(file_to,sorted_data[:,0:2],fmt='%.3f',delimiter=' ')

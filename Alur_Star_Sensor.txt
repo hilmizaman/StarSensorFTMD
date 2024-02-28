@@ -1,0 +1,8 @@
+Alur program star sensor FTMD:
+
+1. Buat katalog bintang
+2. Jalankan katalog bintang di star generator FTMD
+3. Lakukan pengambilan gambar
+4. Koreksi gambar dengan melakukan star centroiding
+5. Jalankan program star tracking yang digunakan
+6. Konversi attitude satelit ke bentuk lainnya

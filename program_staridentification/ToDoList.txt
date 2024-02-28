@@ -1,0 +1,11 @@
+alur star tracker:
+1. Mengamankan program kak David - Done
+2. Mengamankan program kak Ardi - Done
+3. Mempelajari apa katalog yang digunakan di program kak David - Done
+4. Membuat katalog sekunder untuk dimasukkan ke program kak Ardi berisi bintang tetangga - on progress
+5. Mencoba run kedua program kak Ardi yang ada untuk menentukan orientasi satelit
+    5.a. Coba program identifikasi bintang lain yang sudah disusun
+6. Konversi ke attitude satelit asli
+7. Integrasi kedua program supaya menjadi satu kesatuan
+8. Iterasi dan koreksi sampai program berjalan maksimal
+9. Lulus :v
