@@ -5,12 +5,13 @@ from astropy.io import ascii
 
 OUT=[]
 for zzz in range(1):
-    file_from='./result_staridentification/StarPos_sorted/CG'+str(zzz+1)+'.txt'
-    file_to='./result_staridentification/Result/CG'+str(zzz+1)+'.txt'
+    file_from='./result_staridentification/StarPos_sorted/WCG'+str(zzz+1)+'.txt'
+    file_to='./result_staridentification/Result/WCG1_binary'+'.txt'
 
     Catnew = ascii.read("./program_staridentification/Catalog_mod2.txt")
     Pixstars = ascii.read(file_from)
-    IDNx = ascii.read('./program_staridentification/IDNx2.txt')
+    IDNx = ascii.read('./program_staridentification/IDNx_new.txt')
+
     xp = Pixstars['col1']
     yp = Pixstars['col2']
     RA = Catnew['col1']
