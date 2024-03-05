@@ -20,16 +20,16 @@ ytot = 2 * mpmath.tan((FOVy * mpmath.pi / 180) / 2) * f;
 xpixel = l / xtot;
 ypixel = w / ytot;
 
-
-zz = 0
+OUT=[]
+zz = 80
 #input data bintang
 file_from='./result_staridentification/StarPos_sorted/WCG'+str(zz+1)+'.txt'
-file_to='./result_staridentification/Result/WCG1_binary'+'.txt'
+file_to='./result_staridentification/Result/WCG_bin'+str(zz+1)+'.txt'
 
 Catnew = ascii.read("./program_staridentification/Catalog_mod2.txt")
 Pixstars = ascii.read(file_from)
 neighbor = ascii.read('./program_staridentification/Distance_sorted.txt')
-IDNx = ascii.read('./program_staridentification/IDNx_new.txt')
+IDNx = ascii.read('./program_staridentification/IDNx2.txt')
 
 #Data koordinat bintang di CCD
 xp = Pixstars['col1']
@@ -41,6 +41,8 @@ MA = Catnew['col3']
 #Data bintang tetangga
 ID_sorted = neighbor['col1']
 dist_12 = neighbor['col2']
+ID2 = IDNx['col1']
+ID3 = IDNx['col2']
 
 
 
@@ -147,9 +149,9 @@ for ii in range(N_stars-2):
     if up==-1 or low==-1:
         print('gagal bro!')
         break 
-    print([low,up])
+    #print([low,up])
     Dist_345 = np.array([Star[0][low:up],Star[1][low:up],Star[2][low:up],Star[3][low:up],Star[4][low:up]])
-    print(Dist_345)
+    #print(Dist_345)
 
 error_tot = 99999
 tot = alfa1[0]+alfa1[1]+alfa1[2]+alfa1[3]
@@ -161,4 +163,99 @@ for num in range(up-low):
         error_tot = error_totz
         ID_fin = Dist_345[0][num]
 
-print(ID_fin)
+print(Dist_345)
+print(IDNx['col1'][int(ID_fin)])
+ID_fin = int(ID_fin)
+ID_fin2 = int(IDNx['col1'][int(ID_fin-1)])
+ID_fin3 = int(IDNx['col2'][int(ID_fin-1)])
+print([ID_fin,ID_fin2,ID_fin3])
+
+
+
+xsky1 = mpmath.cos(RA[ID_fin-1])*mpmath.cos(DE[ID_fin-1]);
+ysky1 = mpmath.sin(RA[ID_fin-1])*mpmath.cos(DE[ID_fin-1]);
+zsky1 = mpmath.sin(DE[ID_fin-1]);
+
+xsky2 = mpmath.cos(RA[ID_fin2-1])*mpmath.cos(DE[ID_fin2-1]);
+ysky2 = mpmath.sin(RA[ID_fin2-1])*mpmath.cos(DE[ID_fin2-1]);
+zsky2 = mpmath.sin(DE[ID_fin2-1]);
+
+xsky3 = mpmath.cos(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
+ysky3 = mpmath.sin(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
+zsky3 = mpmath.sin(DE[ID_fin3-1]);
+
+vv1 = np.zeros(3)
+vv2 = np.zeros(3)
+vv3 = np.zeros(3)
+
+vv1[0] = xsky1
+vv1[1] = ysky1
+vv1[2] = zsky1
+
+vv2[0] = xsky2
+vv2[1] = ysky2
+vv2[2] = zsky2
+
+vv3[0] = xsky3
+vv3[1] = ysky3
+vv3[2] = zsky3
+
+B1 = np.zeros((3,3))
+B2 = np.zeros((3,3))
+B3 = np.zeros((3,3))
+
+B1[0][0] = xsky1*v[0,0]
+B1[0][1] = xsky1*v[0,1]
+B1[0][2] = xsky1*v[0,2]
+B1[1][0] = ysky1*v[0,0]
+B1[1][1] = ysky1*v[0,1]
+B1[1][2] = ysky1*v[0,2]
+B1[2][0] = zsky1*v[0,0]
+B1[2][1] = zsky1*v[0,1]
+B1[2][2] = zsky1*v[0,2]
+
+B2[0][0] = xsky2*v[1,0]
+B2[0][1] = xsky2*v[1,1]
+B2[0][2] = xsky2*v[1,2]
+B2[1][0] = ysky2*v[1,0]
+B2[1][1] = ysky2*v[1,1]
+B2[1][2] = ysky2*v[1,2]
+B2[2][0] = zsky2*v[1,0]
+B2[2][1] = zsky2*v[1,1]
+B2[2][2] = zsky2*v[1,2]
+
+B3[0][0] = xsky3*v[2,0]
+B3[0][1] = xsky3*v[2,1]
+B3[0][2] = xsky3*v[2,2]
+B3[1][0] = ysky3*v[2,0]
+B3[1][1] = ysky3*v[2,1]
+B3[1][2] = ysky3*v[2,2]
+B3[2][0] = zsky3*v[2,0]
+B3[2][1] = zsky3*v[2,1]
+B3[2][2] = zsky3*v[2,2]
+
+B = B1+B2+B3
+
+U, S, VH = np.linalg.svd(B, full_matrices=True)
+I = np.eye(3)
+R1 = np.matmul(-U,I)
+R2 = np.matmul(R1,VH)
+
+d0 = mpmath.asin(-R2[2][2])*180/np.pi
+a01 = mpmath.acos(-R2[0][2]/mpmath.cos(d0*np.pi/180))*180/np.pi
+a02 = mpmath.asin(-R2[1][2]/mpmath.cos(d0*np.pi/180))*180/np.pi
+if a02 < 0:
+    a0 = -a01
+else :
+    a0 = a01
+
+p00 = mpmath.atan2(R2[2][0],R2[2][1])*180/np.pi;
+
+RA0 = a0
+DE0 = d0
+Roll0 = p00
+
+final=[RA0,DE0,Roll0]
+print(final)
+#OUT.append({'RA':RA0,'dec':DE0,'roll':Roll0})
+#np.savetxt(file_to,final,fmt='%.3f',delimiter=' ')
