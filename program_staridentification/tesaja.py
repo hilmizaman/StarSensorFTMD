@@ -48,7 +48,7 @@ for zz in range(100):
 
 
     #input berapa bintang yang digunakan
-    N_stars = 5
+    N_stars = 7
 
     #fungsi untuk jarak antar bintang di CCD
     def CCD_dist(x,y):
@@ -76,12 +76,15 @@ for zz in range(100):
     print(alfa1)
 
     #error maks untuk jarak paling dekat
-    error1 = 0.00025
+    error1 = 0.0003
     error2 = error1/10
     if alfa1[0]<0.02:
-        error1 = 0.0005
+        error1 = 0.0004
         error2 = error1/10
     if alfa1[0]>0.035:
+        error1 = 0.0004
+        error2 = error1/10
+    if alfa1[0]>0.045:
         error1 = 0.0005
         error2 = error1/10
     if alfa1[0]>0.06:
@@ -144,7 +147,10 @@ for zz in range(100):
     dis3 = np.array(neighbor['col3'][low:up])
     dis4 = np.array(neighbor['col4'][low:up])
     dis5 = np.array(neighbor['col5'][low:up])
-    Dist_345 = np.array([IDN,dis2,dis3,dis4,dis5])
+    dis6 = np.array(neighbor['col6'][low:up])
+    dis7 = np.array(neighbor['col7'][low:up])
+
+    Dist_345 = np.array([IDN,dis2,dis3,dis4,dis5,dis6,dis7])
     #print(Dist_345)
     dis=[]
     Starnum=[]
@@ -162,15 +168,15 @@ for zz in range(100):
         #print([low,up])
         up = uppa
         low = lowwa
-        Dist_345 = np.array([Star[0][low:up],Star[1][low:up],Star[2][low:up],Star[3][low:up],Star[4][low:up]])
+        Dist_345 = np.array([Star[0][low:up],Star[1][low:up],Star[2][low:up],Star[3][low:up],Star[4][low:up],Star[5][low:up],Star[6][low:up]])
         #print(Dist_345)
 
     error_tot = 99999
-    tot = alfa1[0]+alfa1[1]+alfa1[2]+alfa1[3]
+    tot = sum(alfa1)
     #print([up,low])
     ID_fin = []
     for num in range(up-low):
-        error_totz = np.abs(Dist_345[1][num]+Dist_345[2][num]+Dist_345[3][num]+Dist_345[4][num]-tot)
+        error_totz = np.abs(Dist_345[1][num]+Dist_345[2][num]+Dist_345[3][num]+Dist_345[4][num]+Dist_345[5][num]+Dist_345[6][num]-tot)
         #print(error_totz)
         if error_totz < error_tot:
             error_tot = error_totz
@@ -199,7 +205,7 @@ for zz in range(100):
     zsky3 = mpmath.sin(DE[ID_fin3-1]);
 
     print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
-    OUT.append({'ID':ID_fin,'RA':np.rad2deg(RA[ID_fin-1]),'dec':np.rad2deg(DE[ID_fin-1])})
+    OUT.append({'ID':ID_fin,'RA':np.rad2deg(RA[ID_fin-1]),'dec':np.rad2deg(DE[ID_fin-1]),'dist':alfa1[0]})
 
 
 import csv
@@ -209,7 +215,7 @@ file_name = 'Result_sementara.csv'
 # Open the file in write mode
 with open(file_name, 'w', newline='') as csvfile:
     # Define the header (column names)
-    fieldnames = ['ID','RA', 'dec']
+    fieldnames = ['ID','RA', 'dec','dist']
     
     # Create a CSV writer
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
