@@ -76,8 +76,14 @@ for zz in range(100):
     print(alfa1)
 
     #error maks untuk jarak paling dekat
-    error1 = 0.0005
+    error1 = 0.00025
     error2 = error1/10
+    if alfa1[0]<0.02:
+        error1 = 0.0005
+        error2 = error1/10
+    if alfa1[0]>0.035:
+        error1 = 0.0005
+        error2 = error1/10
     if alfa1[0]>0.06:
         error1 = 0.001
         error2 = error1/2
