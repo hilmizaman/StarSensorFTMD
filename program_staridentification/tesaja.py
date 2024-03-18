@@ -1,6 +1,68 @@
 import numpy as np
 import mpmath
 from astropy.io import ascii
+import csv
+
+def csv_to_txt(csv_filename, txt_filename):
+    with open(csv_filename, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        with open(txt_filename, 'w') as txt_file:
+            for row in csv_reader:
+                # Assuming each element in a row is separated by a space
+                txt_file.write(' '.join(row) + '\n')
+
+# Example usage
+for i in range(1000):
+    path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starPositionCalculated/firstMethod/CG'
+    #path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starPositionCalculated/secondMethod/WCG'
+    file='.csv'
+    num=str(i+1)
+    path_to='./result_staridentification/StarPosCalc/CG'
+    #path_to='./result_staridentification/StarPosCalc/WCG'
+    file_to='.txt'
+    file_from=path+num+file
+    file_to=path_to+num+file_to
+    csv_to_txt(file_from, file_to)
+
+for i in range(1000):
+    path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/CG'
+    #path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/WCG'
+    file='.txt'
+    num=str(i+1)
+    path_to='./result_staridentification/StarPos_sorted/CG'
+    #path_to='./result_staridentification/StarPos_sorted/WCG'
+    file_from=path+num+file
+    file_to=path_to+num+file
+    # Read coordinates from the file
+    with open(file_from, "r") as file:
+        lines = file.readlines()
+
+    # Parse coordinates from lines
+    coordinates = np.array([list(map(float, line.strip().split())) for line in lines])
+
+    # Calculate distances from (0,0)
+    distances = np.linalg.norm(coordinates, axis=1)
+
+    # Find the index of the point closest to (0,0)
+    closest_index = np.argmin(distances)
+    closest_point = coordinates[closest_index]
+
+    # Remove the closest point from the original data
+    coordinates_without_closest = np.delete(coordinates, closest_index, axis=0)
+
+    # Calculate distances from the closest point
+    distances_from_closest = np.linalg.norm(coordinates_without_closest - closest_point, axis=1)
+
+    # Combine coordinates and distances for sorting
+    data_with_distances = np.column_stack((coordinates_without_closest, distances_from_closest))
+
+    # Sort based on distances
+    sorted_data = data_with_distances[data_with_distances[:, 2].argsort()]
+
+    # Insert the closest point at the top
+    sorted_data = np.insert(sorted_data, 0, np.append(closest_point, 0), axis=0)
+
+    np.savetxt(file_to,sorted_data[:,0:2],fmt='%.3f',delimiter=' ')
 
 #spesifikasi CCD
 l = 3280
@@ -21,10 +83,10 @@ xpixel = l / xtot;
 ypixel = w / ytot;
 
 OUT=[]
-for zz in range(100):
+for zz in range(1000):
     #input data bintang
-    file_from='./result_staridentification/StarPos_sorted/WCG'+str(zz+1)+'.txt'
-    file_to='./result_staridentification/Result/WCG_bin'+str(zz+1)+'.txt'
+    file_from='./result_staridentification/StarPos_sorted/CG'+str(zz+1)+'.txt'
+    file_to='./result_staridentification/Result/CG_bin'+str(zz+1)+'.txt'
 
     Catnew = ascii.read("./program_staridentification/Catalog_mod2.txt")
     Pixstars = ascii.read(file_from)
@@ -76,26 +138,52 @@ for zz in range(100):
     print(alfa1)
 
     #error maks untuk jarak paling dekat
-    error1 = 0.0003
+    id_sub = -9363479276.48673*alfa1[0]**5+2529712831.02641*alfa1[0]**4-239653974.935343*alfa1[0]**3+8305048.16576691*alfa1[0]**2+21270.2957076176*alfa1[0]+86.1151602836825
+    print(id_sub)
+    idup = id_sub+150
+    idlow= id_sub-150
+    '''error1 = 0.0003
     error2 = error1/10
     if alfa1[0]<0.02:
-        error1 = 0.0004
+        error1 = 0.0005
         error2 = error1/10
     if alfa1[0]>0.035:
         error1 = 0.0004
         error2 = error1/10
-    if alfa1[0]>0.045:
+    if alfa1[0]>0.04:
+        error1 = 0.00055
+        error2 = error1/8
+    if alfa1[0]<0.015:
         error1 = 0.0005
+        error2 = error1/5
+    if alfa1[0]<0.005:
+        error1 = 0.001
+        error2 = error1/2    
+    if alfa1[0]<0.001:
+        error1 = 0.001
+        error2 = error1    
+    if alfa1[0]>0.03:
+        error1 = 0.0006
         error2 = error1/10
+    if alfa1[0]>0.05:
+        error1 = 0.001
+        error2 = error1/5    
     if alfa1[0]>0.06:
         error1 = 0.001
-        error2 = error1/2
+        error2 = error1/2'''
 
     #menentukan batas atas dan bawah
-    upper_lim = alfa1[0]+error1
-    lower_lim = alfa1[0]-error1
-
-
+    upper_lim = 2.16103801737176e-19*idup**5-2.46155782506950e-15*idup**4+1.04160334113478e-11*idup**3-1.99440998195988e-08*idup**2+2.41921700426570e-05*idup-0.00168330254604258
+    lower_lim = 2.16103801737176e-19*idlow**5-2.46155782506950e-15*idlow**4+1.04160334113478e-11*idlow**3-1.99440998195988e-08*idlow**2+2.41921700426570e-05*idlow-0.00168330254604258
+    if abs(upper_lim-alfa1[0])>abs(lower_lim-alfa1[0]):
+        error1 = abs(upper_lim-alfa1[0])
+        error2 = error1/10
+    else:
+        error1 = abs(lower_lim-alfa1[0])
+        error2 = error1/10
+    
+    '''upper_lim = alfa1[0]+error1
+    lower_lim = alfa1[0]-error1'''
 
     def binary_search(arr, target, err):
         left = 0
@@ -124,8 +212,19 @@ for zz in range(100):
     N_lower = binary_search(dist_12,lower_lim,error2)
 
     print([N_lower,N_upper])
-
-
+    if N_lower ==-1:
+        N_lower = int(idlow)
+        if int(idlow)<0:
+            N_lower = 0
+    if N_upper ==-1:
+        N_upper = int(idup)
+        if int(idup):
+            N_upper = 5102
+    print([N_lower,N_upper])
+    if N_upper > 5000:
+        N_upper = 5102
+    if N_lower < 100:
+        N_lower = 0
     #placeholder buat lower upper di loop
     low=N_lower
     up=N_upper
@@ -160,10 +259,10 @@ for zz in range(100):
         upper_lim1 = alfa1[ii+1]+error1*(ii+3)*2
         lower_lim1 = alfa1[ii+1]-error1*(ii+3)*2
         #mencari batas atas dan bawah 
-        uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3))
-        lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3))
+        uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3)*1.5)
+        lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3)*1.5)
         if uppa==-1 or lowwa==-1:
-            print('iter no'+str(zz+1)+'gagal bro pas ii='+str(ii))
+            print('iter no '+str(zz+1)+' gagal bro pas ii='+str(ii))
             break 
         #print([low,up])
         up = uppa
@@ -172,12 +271,16 @@ for zz in range(100):
         #print(Dist_345)
 
     error_tot = 99999
-    tot = sum(alfa1)
+    weight = [1,1,1,1,1,1]
+    tot = sum(np.multiply(alfa1,weight))
     #print([up,low])
     ID_fin = []
     for num in range(up-low):
-        error_totz = np.abs(Dist_345[1][num]+Dist_345[2][num]+Dist_345[3][num]+Dist_345[4][num]+Dist_345[5][num]+Dist_345[6][num]-tot)
-        #print(error_totz)
+        error_totz = 0
+        mat = [Dist_345[1][num],Dist_345[2][num],Dist_345[3][num],Dist_345[4][num],Dist_345[5][num],Dist_345[6][num]]
+        for kz in range(6):
+            error_totz = error_totz+abs(alfa1[kz]-mat[kz])*weight[kz]
+        #print([Dist_345[0][num],error_totz])
         if error_totz < error_tot:
             error_tot = error_totz
             ID_fin = Dist_345[0][num]
@@ -204,7 +307,7 @@ for zz in range(100):
     ysky3 = mpmath.sin(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
     zsky3 = mpmath.sin(DE[ID_fin3-1]);
 
-    print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
+    #print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
     OUT.append({'ID':ID_fin,'RA':np.rad2deg(RA[ID_fin-1]),'dec':np.rad2deg(DE[ID_fin-1]),'dist':alfa1[0]})
 
 

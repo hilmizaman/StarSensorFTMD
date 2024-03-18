@@ -120,8 +120,8 @@ int main() {
         }
 
         // Iterating Through Each Pixels
-        for (int i = 24; i < rows-24; i++) {
-            for (int j = 24; j < columns-24; j++) { 
+        for (int i = 30; i < rows-30; i++) {
+            for (int j = 30; j < columns-30; j++) { 
                 
                 /*if (bigIndex == 7 && i > 320 && j > 320 && i < 360 && j < 360) {
                             cout << i+1 << ", " << j+1 << ". " << toCheck[i][j] << endl;
@@ -216,10 +216,10 @@ int main() {
         for (int i = 0; i < centroidsX.size(); i++) {
             centroidsX[i] = (centroidsX[i] * xfactor);
             centroidsX[i] = centroidsX[i] - (3280.0/2.0);
-            centroidsX[i] = centroidsX[i] - 3.6;
+            centroidsX[i] = centroidsX[i];
             centroidsY[i] = (centroidsY[i] * yfactor);
             centroidsY[i] = (centroidsY[i] * -1.0) + (2464.0/2.0);
-            centroidsY[i] = centroidsY[i] - 1.36;
+            centroidsY[i] = centroidsY[i];
         }
 
         //cout << centroidsNum << "\n";

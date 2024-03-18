@@ -1,19 +1,20 @@
-import numpy as np
+def sum_except_index_with_weights(arr, weights, index):
+    # Check if the index is valid
+    if index < 0 or index >= len(arr):
+        return "Invalid index"
+    
+    # Sum all elements except the one at the given index
+    result = sum(val * weight for i, (val, weight) in enumerate(zip(arr, weights)) if i != index)
+    
+    # Add the missing weight if the index is not at the end of the array
+    if index < len(arr) - 1:
+        result += arr[index] * weights[index]
 
-# Sample matrix representing coordinates
-coordinates_matrix = np.array([[1, 2], [1, 4], [1, 5], [1, -3]])
+    return result
 
-# Calculate the distance of each coordinate from the origin
-distances = np.sqrt(np.sum(coordinates_matrix**2, axis=1))
-
-# Pair each coordinate with its corresponding distance
-coordinate_distance_pairs = list(zip(coordinates_matrix, distances))
-
-# Sort the pairs based on distances and then coordinates
-sorted_pairs = sorted(coordinate_distance_pairs, key=lambda x: (x[1], x[0][0], x[0][1]))
-
-# Extract the sorted coordinates
-sorted_coordinates = [pair[0] for pair in sorted_pairs]
-
-print("Sorted coordinates based on distance from origin and then coordinates:")
-print(sorted_coordinates)
+# Example usage
+arr = [3, 2, 5, 1, 5, 9]
+weights = [1, 1, 1, 1, 1]  # Weights corresponding to each element in arr except the last one
+index = 0  # Index of the element to exclude
+result = sum_except_index_with_weights(arr, weights, index)
+print("Result:", result)

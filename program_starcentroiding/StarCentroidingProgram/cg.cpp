@@ -91,7 +91,7 @@ int main() {
     // 2. FINDING THE STAR CENTROID
 
         // Declaring Region of Interest
-        int ROI_size_default = 24;                     // The size of ROI rows and columns
+        int ROI_size_default = 22;                     // The size of ROI rows and columns
         int ROI_size = ROI_size_default;
 
         // Declaring Signal and Noise Threshold
@@ -119,8 +119,8 @@ int main() {
         }
 
         // Iterating Through Each Pixels
-        for (int i = 24; i < rows-24; i++) {
-            for (int j = 24; j < columns-24; j++) { 
+        for (int i = ROI_size_default; i < rows-ROI_size_default; i++) {
+            for (int j = ROI_size_default; j < columns-ROI_size_default; j++) { 
                 
                 /*if (bigIndex == 7 && i > 320 && j > 320 && i < 360 && j < 360) {
                             cout << i+1 << ", " << j+1 << ". " << toCheck[i][j] << endl;
@@ -221,10 +221,10 @@ int main() {
         for (int i = 0; i < centroidsX.size(); i++) {
             centroidsX[i] = (centroidsX[i] * xfactor);
             centroidsX[i] = centroidsX[i] - (3280.0/2.0);
-            centroidsX[i] = centroidsX[i] - 3.6;
+            centroidsX[i] = centroidsX[i];
             centroidsY[i] = (centroidsY[i] * yfactor);
             centroidsY[i] = (centroidsY[i] * -1.0) + (2464.0/2.0);
-            centroidsY[i] = centroidsY[i] - 1.36;
+            centroidsY[i] = centroidsY[i];
         }
 
       //cout << centroidsNum << "\n";

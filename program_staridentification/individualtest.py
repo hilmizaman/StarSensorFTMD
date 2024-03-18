@@ -1,6 +1,7 @@
 import numpy as np
 import mpmath
 from astropy.io import ascii
+import csv
 
 #spesifikasi CCD
 l = 3280
@@ -20,11 +21,12 @@ ytot = 2 * mpmath.tan((FOVy * mpmath.pi / 180) / 2) * f;
 xpixel = l / xtot;
 ypixel = w / ytot;
 
-OUT=[]
-zz=8
+
+zz = 5
+
 #input data bintang
-file_from='./result_staridentification/StarPos_sorted/WCG'+str(zz+1)+'.txt'
-file_to='./result_staridentification/Result/WCG_bin'+str(zz+1)+'.txt'
+file_from='./result_staridentification/StarPos_sorted/CG'+str(zz+1)+'.txt'
+file_to='./result_staridentification/Result/CG_bin'+str(zz+1)+'.txt'
 
 Catnew = ascii.read("./program_staridentification/Catalog_mod2.txt")
 Pixstars = ascii.read(file_from)
@@ -43,6 +45,7 @@ ID_sorted = neighbor['col1']
 dist_12 = neighbor['col2']
 ID2 = IDNx['col1']
 ID3 = IDNx['col2']
+ID4 = IDNx['col3']
 
 
 
@@ -73,29 +76,61 @@ alfa1 = np.zeros(N_stars-1)
 for i in range(N_stars-1):
     alfa1[i] = mpmath.acos(np.vdot(v[0,:],v[i+1,:]))
 
-print(alfa1)
+theta1 = np.zeros(N_stars-2)
+for i in range(N_stars-2):
+    r12 = v[1,:] - v[0,:]
+    r1n = v[i+2,:] - v[0,:]
+    theta1[i] = mpmath.acos(np.dot(r12,r1n)/(np.linalg.norm(r12)*np.linalg.norm(r1n)))
 
+print(alfa1)
+print(theta1)
 #error maks untuk jarak paling dekat
-error1 = 0.0003
+id_sub = -9363479276.48673*alfa1[0]**5+2529712831.02641*alfa1[0]**4-239653974.935343*alfa1[0]**3+8305048.16576691*alfa1[0]**2+21270.2957076176*alfa1[0]+86.1151602836825
+print(id_sub)
+idup = id_sub+150
+idlow= id_sub-150
+'''error1 = 0.0003
 error2 = error1/10
 if alfa1[0]<0.02:
-    error1 = 0.0004
+    error1 = 0.0005
     error2 = error1/10
 if alfa1[0]>0.035:
     error1 = 0.0004
     error2 = error1/10
-if alfa1[0]>0.045:
+if alfa1[0]>0.04:
+    error1 = 0.00055
+    error2 = error1/8
+if alfa1[0]<0.015:
     error1 = 0.0005
+    error2 = error1/5
+if alfa1[0]<0.005:
+    error1 = 0.001
+    error2 = error1/2    
+if alfa1[0]<0.001:
+    error1 = 0.001
+    error2 = error1    
+if alfa1[0]>0.03:
+    error1 = 0.0006
     error2 = error1/10
+if alfa1[0]>0.05:
+    error1 = 0.001
+    error2 = error1/5    
 if alfa1[0]>0.06:
     error1 = 0.001
-    error2 = error1/2
+    error2 = error1/2'''
 
 #menentukan batas atas dan bawah
-upper_lim = alfa1[0]+error1
-lower_lim = alfa1[0]-error1
+upper_lim = 2.16103801737176e-19*idup**5-2.46155782506950e-15*idup**4+1.04160334113478e-11*idup**3-1.99440998195988e-08*idup**2+2.41921700426570e-05*idup-0.00168330254604258
+lower_lim = 2.16103801737176e-19*idlow**5-2.46155782506950e-15*idlow**4+1.04160334113478e-11*idlow**3-1.99440998195988e-08*idlow**2+2.41921700426570e-05*idlow-0.00168330254604258
+if abs(upper_lim-alfa1[0])>abs(lower_lim-alfa1[0]):
+    error1 = abs(upper_lim-alfa1[0])
+    error2 = error1/10
+else:
+    error1 = abs(lower_lim-alfa1[0])
+    error2 = error1/10
 
-
+'''upper_lim = alfa1[0]+error1
+lower_lim = alfa1[0]-error1'''
 
 def binary_search(arr, target, err):
     left = 0
@@ -124,8 +159,19 @@ N_upper = binary_search(dist_12,upper_lim,error2)
 N_lower = binary_search(dist_12,lower_lim,error2)
 
 print([N_lower,N_upper])
-
-
+if N_lower ==-1:
+    N_lower = int(idlow)
+    if int(idlow)<0:
+        N_lower = 0
+if N_upper ==-1:
+    N_upper = int(idup)
+    if int(idup)>5102:
+        N_upper = 5102
+if N_upper > 5000:
+    N_upper = 5102
+if N_lower < 100:
+    N_lower = 0
+print([N_lower,N_upper])
 #placeholder buat lower upper di loop
 low=N_lower
 up=N_upper
@@ -149,21 +195,21 @@ dis4 = np.array(neighbor['col4'][low:up])
 dis5 = np.array(neighbor['col5'][low:up])
 dis6 = np.array(neighbor['col6'][low:up])
 dis7 = np.array(neighbor['col7'][low:up])
+
 Dist_345 = np.array([IDN,dis2,dis3,dis4,dis5,dis6,dis7])
 #print(Dist_345)
 dis=[]
 Starnum=[]
 for ii in range(N_stars-2):
     Star = sort_2d_array(Dist_345,n=ii+2)
-    #print(Star)
     #print(Star[0][20:50])
     upper_lim1 = alfa1[ii+1]+error1*(ii+3)*2
     lower_lim1 = alfa1[ii+1]-error1*(ii+3)*2
     #mencari batas atas dan bawah 
-    uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3))
-    lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3))
+    uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3)*1.5)
+    lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3)*1.5)
     if uppa==-1 or lowwa==-1:
-        print('iter no'+str(zz+1)+'gagal bro pas ii='+str(ii))
+        print('iter no '+str(zz+1)+' gagal bro pas ii='+str(ii))
         break 
     #print([low,up])
     up = uppa
@@ -171,20 +217,58 @@ for ii in range(N_stars-2):
     Dist_345 = np.array([Star[0][low:up],Star[1][low:up],Star[2][low:up],Star[3][low:up],Star[4][low:up],Star[5][low:up],Star[6][low:up]])
     #print(Dist_345)
 
-#print(Dist_345)
 error_tot = 99999
-tot = sum(alfa1)
+weight = [1,1,1,1,2,3]
+tot = sum(np.multiply(alfa1,weight))
+print(alfa1)
 #print([up,low])
-ID_fin = []
+ID_fin = [] 
 for num in range(up-low):
-    error_totz = np.abs(Dist_345[1][num]+Dist_345[2][num]+Dist_345[3][num]+Dist_345[4][num]+Dist_345[5][num]+Dist_345[6][num]-tot)
+    error_totz = 0
+    mat = [Dist_345[1][num],Dist_345[2][num],Dist_345[3][num],Dist_345[4][num],Dist_345[5][num],Dist_345[6][num]]
+    for kz in range(6):
+        error_totz = error_totz+abs(alfa1[kz]-mat[kz])*weight[kz]
     print([Dist_345[0][num],error_totz])
-    #print(error_totz)
     if error_totz < error_tot:
         error_tot = error_totz
         ID_fin = Dist_345[0][num]
 
-#print(Dist_345)
+'''if error_tot > 1e-4:
+    def veccat(RA,DE):
+        v = np.zeros(3)
+        v[0] = np.cos(RA)*np.cos(DE)
+        v[1] = np.sin(RA)*np.sin(DE)
+        v[2] = np.sin(DE)
+        return v
+    rot_error = 99999
+
+    rot_tot = theta1[0]+theta1[1]+theta1[2]
+    for num in range(up-low):
+        idnow = Dist_345[0][num]
+        vv = np.zeros((5,3))
+        vv[0,:] = veccat(RA=RA[int(idnow-1)],DE=DE[int(idnow-1)])
+        vv[1,:] = veccat(RA=RA[IDNx['col1'][int(ID_fin-1)]],DE=DE[IDNx['col1'][int(ID_fin-1)]])
+        vv[2,:] = veccat(RA=RA[IDNx['col2'][int(ID_fin-1)]],DE=DE[IDNx['col2'][int(ID_fin-1)]])
+        vv[3,:] = veccat(RA=RA[IDNx['col3'][int(ID_fin-1)]],DE=DE[IDNx['col3'][int(ID_fin-1)]])
+        vv[4,:] = veccat(RA=RA[IDNx['col4'][int(ID_fin-1)]],DE=DE[IDNx['col4'][int(ID_fin-1)]])
+        thetacat = np.zeros(3)
+        
+        mat = sum(np.multiply([Dist_345[1][num],Dist_345[2][num],Dist_345[3][num],Dist_345[4][num],Dist_345[5][num],Dist_345[6][num]],weight))
+        error_totz = np.abs(mat-tot)
+
+        for k in range(3):
+            rr12 = vv[1,:]-vv[0,:]
+            rr1k = vv[k+2,:]-vv[0,:]
+            thetacat[k] = mpmath.acos(np.dot(rr12,rr1k)/(np.linalg.norm(rr12)*np.linalg.norm(rr1k)))
+        rot_totz = abs(sum(thetacat)-rot_tot)
+        print([Dist_345[0][num],error_totz,rot_totz])
+        if rot_totz*error_totz<rot_error:
+            rot_error = rot_totz*error_totz
+            ID_fin = Dist_345[0][num]
+'''
+
+
+print(Dist_345)
 print(ID_fin)
 #print(IDNx['col1'][int(ID_fin-1)])
 ID_fin = int(ID_fin)
@@ -206,30 +290,8 @@ xsky3 = mpmath.cos(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
 ysky3 = mpmath.sin(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
 zsky3 = mpmath.sin(DE[ID_fin3-1]);
 
-print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
-#OUT.append({'ID':ID_fin,'RA':np.rad2deg(RA[ID_fin-1]),'dec':np.rad2deg(DE[ID_fin-1]),'dist':alfa1[0]})
+#print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
 
-'''
-import csv
-# Specify the file name
-file_name = 'Result_sementara.csv'
-
-# Open the file in write mode
-with open(file_name, 'w', newline='') as csvfile:
-    # Define the header (column names)
-    fieldnames = ['ID','RA', 'dec','dist']
-    
-    # Create a CSV writer
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-    # Write the header
-    writer.writeheader()
-
-    # Write the rows
-    writer.writerows(OUT)
-
-print(f'Table has been written to {file_name}')
-'''
 
 '''
 vv1 = np.zeros(3)
