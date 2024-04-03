@@ -75,6 +75,31 @@
 		"options": {
 		  "cwd": "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/program_starcentroiding/StarCentroidingProgram"
 		}
+	  },
+	  {
+		"label": "build centroid",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-fdiagnostics-color=always",
+		  "-g",
+		  "wcg.cpp",
+		  "-o",
+		  "WeightedCoG",
+		  "-I/usr/local/include/opencv4",
+          "-L/usr/local/lib",
+          "-lopencv_core",
+          "-lopencv_highgui",
+          "-lopencv_imgcodecs",
+		  "-lopencv_imgproc"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"options": {
+		  "cwd": "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/starcent.cpp"
+		}
 	  }
 	]
   }
