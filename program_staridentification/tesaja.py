@@ -17,24 +17,16 @@ for i in range(1000):
     #path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_starcentroiding/starPositionCalculated/secondMethod/WCG'
     file='.csv'
     num=str(i+1)
-    path_to='./result_staridentification/StarPosCalc/CG'
-    #path_to='./result_staridentification/StarPosCalc/WCG'
+    path_to='./result_staridentification/StarPos_sorted/CG'
+    #path_to='./result_staridentification/StarPos_sorted/WCG'
     file_to='.txt'
     file_from=path+num+file
     file_to=path_to+num+file_to
-    csv_to_txt(file_from, file_to)
 
-for i in range(1000):
-    path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/CG'
-    #path='/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/result_staridentification/StarPosCalc/WCG'
-    file='.txt'
-    num=str(i+1)
-    path_to='./result_staridentification/StarPos_sorted/CG'
-    #path_to='./result_staridentification/StarPos_sorted/WCG'
-    file_from=path+num+file
-    file_to=path_to+num+file
+    csv_to_txt(file_from, './tulis.txt')
+
     # Read coordinates from the file
-    with open(file_from, "r") as file:
+    with open('./tulis.txt', "r") as file:
         lines = file.readlines()
 
     # Parse coordinates from lines
@@ -82,15 +74,16 @@ ytot = 2 * mpmath.tan((FOVy * mpmath.pi / 180) / 2) * f;
 xpixel = l / xtot;
 ypixel = w / ytot;
 
-OUT=[]
+OUT = []
 for zz in range(1000):
     #input data bintang
     file_from='./result_staridentification/StarPos_sorted/CG'+str(zz+1)+'.txt'
-    file_to='./result_staridentification/Result/CG_bin'+str(zz+1)+'.txt'
+    file_to='./result_staridentification/Result/CG1_binary'+'.txt'
 
     Catnew = ascii.read("./program_staridentification/Catalog_mod2.txt")
     Pixstars = ascii.read(file_from)
     neighbor = ascii.read('./program_staridentification/Distance_sorted.txt')
+    dist12 = np.array(neighbor['col2'])
     IDNx = ascii.read('./program_staridentification/IDNx2.txt')
 
     #Data koordinat bintang di CCD
@@ -100,14 +93,6 @@ for zz in range(1000):
     RA = Catnew['col1']
     DE = Catnew['col2']
     MA = Catnew['col3']
-    #Data bintang tetangga
-    ID_sorted = neighbor['col1']
-    dist_12 = neighbor['col2']
-    ID2 = IDNx['col1']
-    ID3 = IDNx['col2']
-
-
-
 
     #input berapa bintang yang digunakan
     N_stars = 7
@@ -115,11 +100,11 @@ for zz in range(1000):
     #fungsi untuk jarak antar bintang di CCD
     def CCD_dist(x,y):
         xplane = (x)*xtot/l
-        yplane = (y)*ytot/w
+        yplane = (-y)*ytot/w
         v = np.zeros(3)
         v[0] = xplane/np.sqrt(xplane**2 + yplane**2 +f**2)
         v[1] = yplane/np.sqrt(xplane**2 + yplane**2 +f**2)
-        v[2] = -f/np.sqrt(xplane**2 + yplane**2 +f**2)
+        v[2] = f/np.sqrt(xplane**2 + yplane**2 +f**2)
         return v
 
     #Koordinat bintang di CCD dalam satuan sudut
@@ -135,13 +120,24 @@ for zz in range(1000):
     for i in range(N_stars-1):
         alfa1[i] = mpmath.acos(np.vdot(v[0,:],v[i+1,:]))
 
-    print(alfa1)
+    print(zz+1)
+
+    #error maks untuk jarak paling dekat
+    error1 = 0.002
+
+    #menentukan batas atas dan bawah
+    upper_lim = alfa1[0]+error1
+    lower_lim = alfa1[0]-error1
+
+    #print(alfa1)
 
     #error maks untuk jarak paling dekat
     id_sub = -9363479276.48673*alfa1[0]**5+2529712831.02641*alfa1[0]**4-239653974.935343*alfa1[0]**3+8305048.16576691*alfa1[0]**2+21270.2957076176*alfa1[0]+86.1151602836825
-    print(id_sub)
+    #print(id_sub)
     idup = id_sub+150
     idlow= id_sub-150
+    if id_sub < 125:
+        idup = id_sub+250
     '''error1 = 0.0003
     error2 = error1/10
     if alfa1[0]<0.02:
@@ -181,7 +177,7 @@ for zz in range(1000):
     else:
         error1 = abs(lower_lim-alfa1[0])
         error2 = error1/10
-    
+
     '''upper_lim = alfa1[0]+error1
     lower_lim = alfa1[0]-error1'''
 
@@ -208,10 +204,10 @@ for zz in range(1000):
         return -1
 
     #mencari batas atas dan bawah 
-    N_upper = binary_search(dist_12,upper_lim,error2)
-    N_lower = binary_search(dist_12,lower_lim,error2)
+    N_upper = binary_search(dist12,upper_lim,error2)
+    N_lower = binary_search(dist12,lower_lim,error2)
 
-    print([N_lower,N_upper])
+    #print([N_lower,N_upper])
     if N_lower ==-1:
         N_lower = int(idlow)
         if int(idlow)<0:
@@ -220,7 +216,7 @@ for zz in range(1000):
         N_upper = int(idup)
         if int(idup):
             N_upper = 5102
-    print([N_lower,N_upper])
+    #print([N_lower,N_upper])
     if N_upper > 5000:
         N_upper = 5102
     if N_lower < 100:
@@ -241,7 +237,7 @@ for zz in range(1000):
 
         return sorted_arr
 
-    IDN = np.array(ID_sorted[low:up])
+    IDN = np.array(neighbor['col1'][low:up])
     dis2 = np.array(neighbor['col2'][low:up])
     dis3 = np.array(neighbor['col3'][low:up])
     dis4 = np.array(neighbor['col4'][low:up])
@@ -250,6 +246,7 @@ for zz in range(1000):
     dis7 = np.array(neighbor['col7'][low:up])
 
     Dist_345 = np.array([IDN,dis2,dis3,dis4,dis5,dis6,dis7])
+    Disttrak = np.array([IDN,dis2,dis3,dis4,dis5,dis6,dis7])
     #print(Dist_345)
     dis=[]
     Starnum=[]
@@ -259,10 +256,10 @@ for zz in range(1000):
         upper_lim1 = alfa1[ii+1]+error1*(ii+3)*2
         lower_lim1 = alfa1[ii+1]-error1*(ii+3)*2
         #mencari batas atas dan bawah 
-        uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3)*1.5)
-        lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3)*1.5)
+        uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3)*1)
+        lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3)*1)
         if uppa==-1 or lowwa==-1:
-            print('iter no '+str(zz+1)+' gagal bro pas ii='+str(ii))
+            #print('iter no '+str(zz+1)+' gagal bro pas ii='+str(ii))
             break 
         #print([low,up])
         up = uppa
@@ -285,8 +282,54 @@ for zz in range(1000):
             error_tot = error_totz
             ID_fin = Dist_345[0][num]
 
+
+    #print(np.shape(alfa1))
+    alfa11 = alfa1.reshape(1,6)
+    #print(np.shape(alfa11))
+    if error_tot>0.005:
+        Disnext = Disttrak.reshape((N_upper-N_lower),N_stars)
+        #print(np.shape(Disttrak))
+        #print(np.shape(Disnext))
+        for kz in range(N_stars-3):
+
+            #print(kz)
+            Disnextt = np.delete(Disttrak,kz+1,axis=0)
+            alfax = alfa11
+            Dist_3456 = np.array(Disnextt)
+            #print(alfax)
+            for ii in range(N_stars-3):
+                Star = sort_2d_array(Dist_3456,n=ii+2)
+                #print(Star[0][20:50])
+                upper_lim1 = alfax[0][ii+1]+error1*(ii+3)*2
+                lower_lim1 = alfax[0][ii+1]-error1*(ii+3)*2
+                #mencari batas atas dan bawah 
+                uppa = binary_search(Star[ii+2],upper_lim1,error1*(ii+3))
+                lowwa = binary_search(Star[ii+2],lower_lim1,error1*(ii+3))
+                if uppa==-1 or lowwa==-1:
+                    #print('iter no '+str(zz+1)+' gagal bro pas ii='+str(ii))
+                    break 
+                #print([low,up])
+                up = uppa
+                low = lowwa
+                Dist_3456 = np.array([Star[0][low:up],Star[1][low:up],Star[2][low:up],Star[3][low:up],Star[4][low:up],Star[5][low:up]])
+            #print([low,up])    
+            #print(Dist_3456) 
+            for num in range(up-low):
+                error_totz = 0
+                mat = [Dist_3456[1][num],Dist_3456[2][num],Dist_3456[3][num],Dist_3456[4][num],Dist_3456[5][num]]
+                for kk in range(5):
+                    error_totz = error_totz+abs(alfax[0][kk]-mat[kk])*weight[kk]
+                #print([Dist_3456[0][num],error_totz,kz+2])
+                if error_totz < error_tot-0.0003:
+                    error_tot = error_totz
+                    ID_fin = Dist_3456[0][num]
+
+            #print([ID_fin,error_tot])
+            #print('BATES-----------------------')
+
+
     #print(Dist_345)
-    #print(ID_fin)
+    #print(int(ID_fin-1))
     #print(IDNx['col1'][int(ID_fin-1)])
     ID_fin = int(ID_fin)
     ID_fin2 = int(IDNx['col1'][int(ID_fin-1)])
@@ -294,31 +337,70 @@ for zz in range(1000):
     #print([ID_fin,ID_fin2,ID_fin3])
 
 
+    def skycord(ID):
+        x = np.cos(RA[ID])*np.cos(DE[ID])
+        y = np.sin(RA[ID])*np.cos(DE[ID])
+        z = np.sin(DE[ID])
+        sky = [x,y,z]
+        return sky
+
+    N_wahba = 3
+    vv = np.zeros((N_wahba,3))
+    vv[0][:] = skycord(ID_fin-1)
+    for i in range(N_wahba-1):
+        vv[i+1][:]=skycord(int(IDNx['col'+str(i+1)][int(ID_fin-1)])-1)
+
+    #print(vv)
     #mencari koordinat di langit
-    xsky1 = mpmath.cos(RA[ID_fin-1])*mpmath.cos(DE[ID_fin-1]);
-    ysky1 = mpmath.sin(RA[ID_fin-1])*mpmath.cos(DE[ID_fin-1]);
-    zsky1 = mpmath.sin(DE[ID_fin-1]);
 
-    xsky2 = mpmath.cos(RA[ID_fin2-1])*mpmath.cos(DE[ID_fin2-1]);
-    ysky2 = mpmath.sin(RA[ID_fin2-1])*mpmath.cos(DE[ID_fin2-1]);
-    zsky2 = mpmath.sin(DE[ID_fin2-1]);
 
-    xsky3 = mpmath.cos(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
-    ysky3 = mpmath.sin(RA[ID_fin3-1])*mpmath.cos(DE[ID_fin3-1]);
-    zsky3 = mpmath.sin(DE[ID_fin3-1]);
+    #wahba problem, maksimalkan nilai B = a*b*r'
+    #print(np.outer(vv[0],v[0]))
 
+    #BB=np.zeros((3,3,N_stars-1))
+    #print(np.shape(BB))
+    B=np.zeros((3,3))
+    a = 1/(N_stars-1)
+    #print(a)
+    for hi in range(N_wahba):
+        B+=a*np.outer(vv[hi],v[hi])
+
+    #print(B)
+
+    #print(BB)
+    #print(B)
+
+    #pakai SVD buat nyari matriks A dr B
+    U, S, VT = np.linalg.svd(B)
+    uplus = U @ np.diag([1,1,np.linalg.det(U)])
+    vplus = VT.T @ np.diag([1,1,np.linalg.det(VT.T)])
+    #matriks A di wahba problem (R karena jadi matriks rotasi jg) 
+    R = vplus @ uplus.T
+
+    #for some reason, hasil dari matriks rotasi yg dihasilkan oleh algoritma SVD ini jadi 
+    # [[-21 -22 -23],[31 32 33],[-11 -12 -13]] dari matriks rotasi kalo kita putar arah ZYX sebesar [RA, -de, roll]
+
+
+
+    d0 = -np.arcsin(R[2][2])*180/np.pi
+    a0 = np.arctan2(-R[2][1],-R[2][0])*180/np.pi
+    p00 = np.arctan2(-R[0][2],R[1][2])*180/np.pi
+
+    RA0 = a0
+    DE0 = d0
+    Roll0 = p00
     #print([np.rad2deg(RA[ID_fin-1]),np.rad2deg(DE[ID_fin-1])]) #sudah bener
-    OUT.append({'ID':ID_fin,'RA':np.rad2deg(RA[ID_fin-1]),'dec':np.rad2deg(DE[ID_fin-1]),'dist':alfa1[0]})
+    OUT.append({'ID':ID_fin,'RA':RA0,'dec':DE0,'roll':Roll0,'dist':alfa1[0]})
 
 
 import csv
 # Specify the file name
-file_name = 'Result_sementara.csv'
+file_name = 'Result_sementara2.csv'
 
 # Open the file in write mode
 with open(file_name, 'w', newline='') as csvfile:
     # Define the header (column names)
-    fieldnames = ['ID','RA', 'dec','dist']
+    fieldnames = ['ID','RA', 'dec','roll','dist']
     
     # Create a CSV writer
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
