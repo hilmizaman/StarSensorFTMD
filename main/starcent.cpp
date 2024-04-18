@@ -19,18 +19,51 @@ int main() {
   // READING IMAGE NUMBER ON PYTHON
 
     string imgNumberStr;
-    int imgNumber = stoi(1);
+    ifstream myFile;
+    myFile.open("/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/imgNumber.csv");
+    
+    while(myFile.good()) {
+      string line;
+      getline(myFile, line, ',');
+      imgNumberStr = line;
+    }
+    myFile.close();
+    int imgNumber = stoi(imgNumberStr);
     //cout << "The number of the images is " << imgNumber << ".\n";
 
   // CREATE NECESSARY ARRAYS FOR ITERATIONS
 
     // ARRAYS OF IMAGE PATHS
-    imgPath = "./main/picture.jpg";
-    imgPathArray = imgPath;
+
+      string imgFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/";
+      string imgFileNameTitle = "stars";
+      string imgExtension = ".jpjg";
+      int imgIndexInt = 0;
+      string imgIndexStr = "";
+      string imgPath = "";
+      string imgPathArray[imgNumber] = {};
+
+      for (int i = 0; i < imgNumber; i++) {
+        imgIndexInt = i + 1;
+        imgIndexStr = to_string(imgIndexInt);
+        imgPath = imgFolderPath + imgFileNameTitle + imgIndexStr + imgExtension;
+        imgPathArray[i] = imgPath;
+      }
 
     // ARRAYS OF RESULT PATHS
-    resultPath = "./main/cent.csv";
-    resultPathArray = resultPath;
+      string resultFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/cent";
+      string resultExtension = ".csv";
+      int resultIndexInt = 0;
+      string resultIndexStr = "";
+      string resultPath = "";
+      string resultPathArray[imgNumber] = {};
+
+      for (int i = 0; i < imgNumber; i++) {
+        resultIndexInt = i + 1;
+        resultIndexStr = to_string(resultIndexInt);
+        resultPath = resultFolderPath + resultIndexStr + resultExtension;
+        resultPathArray[i] = resultPath;
+      }
 
   for (int bigIndex = 0; bigIndex < imgNumber; bigIndex++) {
 

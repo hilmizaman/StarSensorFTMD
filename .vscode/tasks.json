@@ -83,9 +83,9 @@
 		"args": [
 		  "-fdiagnostics-color=always",
 		  "-g",
-		  "wcg.cpp",
+		  "starcent.cpp",
 		  "-o",
-		  "WeightedCoG",
+		  "centroid",
 		  "-I/usr/local/include/opencv4",
           "-L/usr/local/lib",
           "-lopencv_core",
