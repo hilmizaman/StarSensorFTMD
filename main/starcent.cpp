@@ -120,8 +120,8 @@ int main() {
         }
 
         // Iterating Through Each Pixels
-        for (int i = ROI_size_default; i < rows-ROI_size_default; i++) {
-            for (int j = ROI_size_default; j < columns-ROI_size_default; j++) { 
+        for (int i = ROI_size_default+930; i < rows-ROI_size_default-930; i++) {
+            for (int j = ROI_size_default+1340; j < columns-ROI_size_default-1340; j++) { 
                 
                 /*if (bigIndex == 7 && i > 320 && j > 320 && i < 360 && j < 360) {
                             cout << i+1 << ", " << j+1 << ". " << toCheck[i][j] << endl;
