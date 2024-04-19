@@ -8,6 +8,7 @@
 #include <string>
 #include <chrono>
 #include <algorithm>
+#include <Python.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -37,7 +38,7 @@ int main() {
 
       string imgFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/";
       string imgFileNameTitle = "stars";
-      string imgExtension = ".jpjg";
+      string imgExtension = ".png";
       int imgIndexInt = 0;
       string imgIndexStr = "";
       string imgPath = "";
@@ -247,11 +248,22 @@ int main() {
         }
   }
 
+  // Initialize the Python interpreter
+  Py_Initialize();
+
+  // Run the Python code
+  FILE *file = fopen("./main/stariden.py", "r");
+  PyRun_SimpleFile(file, "./main/stariden.py");
+  fclose(file);
+
+  // Clean up
+  Py_Finalize();
+
   auto stop = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>(stop - start);
   int timeConsumption = duration.count();
 
-  cout << "1. Center of Gravity Time Consumption: " << timeConsumption/imgNumber << " microseconds\n";
+  cout << "Time Consumption: " << timeConsumption/imgNumber << " microseconds\n";
   
     return 0;
 }
