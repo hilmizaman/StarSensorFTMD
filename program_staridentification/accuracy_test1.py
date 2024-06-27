@@ -8,19 +8,19 @@ initial= '/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/ID_ra
 # Read the CSV file into a DataFrame
 res = pd.read_csv(result)
 init= pd.read_csv(initial)
-
+N=1000
 # Now you can work with the DataFrame (e.g., perform analysis, manipulate data)
-errornum = np.zeros((100,4))
+errornum = np.zeros((N,4))
 max_error = np.deg2rad(5)
 count=0
-blb=np.zeros(100)
-tr = np.zeros(100)
-fl = np.zeros(100)
+blb=np.zeros(N)
+tr = np.zeros(N)
+fl = np.zeros(N)
 def dist(ra1,ra2,de1,de2):
     x = np.arccos(np.sin(de1)*np.sin(de2)+np.cos(de1)*np.cos(de2)*np.cos(ra1-ra2))
     x = np.rad2deg(x)
     return x
-for i in range(100):
+for i in range(N):
     distance = dist(np.deg2rad(init.RA[i]),np.deg2rad(res.RA[i]),np.deg2rad(init.dec[i]),np.deg2rad(res.dec[i]))
     if distance < 5:
         correct = 1

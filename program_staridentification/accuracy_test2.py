@@ -32,8 +32,10 @@ for i in range(N):
     blb[i]=i+1
     errornum[i]=[int(i+1),int(correct),res.dist[i]]
 
+df = pd.DataFrame(errornum)
+df.to_csv('erornum.csv')
+print(errornum) 
 
-#print(errornum) 
 print(count) # Print the first few rows of the DataFrame
 
 plt.scatter(blb,fl)

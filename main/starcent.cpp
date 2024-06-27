@@ -38,7 +38,7 @@ int main() {
 
       string imgFolderPath = "/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/";
       string imgFileNameTitle = "stars";
-      string imgExtension = ".png";
+      string imgExtension = ".jpg";
       int imgIndexInt = 0;
       string imgIndexStr = "";
       string imgPath = "";

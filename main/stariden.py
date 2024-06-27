@@ -348,10 +348,10 @@ d0 = -np.arcsin(R[2][2])*180/np.pi
 a0 = np.arctan2(-R[2][1],-R[2][0])*180/np.pi
 p00 = np.arctan2(-R[0][2],R[1][2])*180/np.pi
 
-RA0 = a0
+RA0 = a0+180
 DE0 = d0
 Roll0 = p00
-print('ID',ID_fin,'RA',RA0,'DE',DE0,'Roll',Roll0) #sudah bener
+print('ID',ID_fin,'RA',RA0,'DE',DE0,'Roll',Roll0, 'Error',error_tot) #sudah bener
 OUT.append({'ID':ID_fin,'RA':RA0,'dec':DE0,'roll':Roll0,'dist':alfa1[0]})
 
 
