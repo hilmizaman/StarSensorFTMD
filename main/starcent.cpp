@@ -13,12 +13,24 @@
 using namespace std;
 using namespace std::chrono;
 
+//uncomment untuk mengambil gambar di Raspi
+/*
+void takePicture(const std::string& fileName) {
+    std::string command = "libcamera-still -o " + fileName;
+    int result = std::system(command.c_str());
+    if (result != 0) {
+        std::cerr << "Error: Failed to take picture" << std::endl;
+    }
+}
+*/
+
 int main() {
   
   auto start = high_resolution_clock::now();
   //cout << "Method 2: Weighted Center of Gravity\n";
   // READING IMAGE NUMBER ON PYTHON
 
+  //  takePicture(main/stars1.jpg);
     string imgNumberStr;
     ifstream myFile;
     myFile.open("/home/hilmi/star-sensor-ftmd/StarSensorFTMD_hilmi/StarSensorFTMD/main/imgNumber.csv");

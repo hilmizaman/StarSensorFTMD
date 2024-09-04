@@ -110,9 +110,9 @@ def displayImg(img,cmap=None):
 
 
 #Right ascension, declination and roll input prompt from user
-ra0 = 284
-de0 = 72
-roll0 = 89
+ra0 = 240
+de0 = 60
+roll0 = 30
 
 ra = radians(float(ra0))
 de = radians(float(de0))
@@ -230,5 +230,5 @@ background = add_noise(0,50,background=background)
 displayImg(background,cmap='gray')
 
 file_name = f"ra{ra0}_de{de0}_roll{roll0}.jpg"
-cv2.imwrite("main/stars1.jpg",background)
 cv2.imwrite(file_name,background)
+#cv2.imwrite("main/stars1.jpg",background)
